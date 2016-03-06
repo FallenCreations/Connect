@@ -1,0 +1,16 @@
+service: Twilio
+
+Twilio:
+    sid: AC6222ea8b37f6386d5ab5298eb74512b3
+    auth_token: 7b355554c000cddd814165cf700d7c77
+    send_from: your_twilio_number
+    incoming_callback_port: 10050
+    
+message_queue:
+    enabled: true
+    interval: 60
+    
+    ## Send out all remaining texts when plugin gets disabled
+    ## Note: If true you could spam texts and cause whatever service you use to disable your account. It also may cost a lot of money.
+    send_remaining_on_disable: false
+
