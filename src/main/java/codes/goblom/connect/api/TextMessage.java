@@ -5,7 +5,6 @@
  */
 package codes.goblom.connect.api;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

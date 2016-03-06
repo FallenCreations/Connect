@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.function.Function;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
@@ -75,11 +76,14 @@ public class LuaCommand extends CCommand {
 
     @Override
     public void execute(PhoneNumber number, String[] args) {
-        Function<String, LuaValue> function = (String t) -> LuaValue.valueOf(t);
-        LinkedList<LuaValue> luaArgs = new LinkedList();
-        Arrays.asList(args).stream().map(function).forEach((arg) -> luaArgs.addLast(arg));
-                
-        execute.call(CoerceJavaToLua.coerce(number), LuaValue.tableOf(luaArgs.toArray(new LuaValue[luaArgs.size()])));
+        LuaValue[] luaArgs = new LuaValue[args.length];
+        
+        for (int i = 0; i< args.length; i++) {
+            luaArgs[i] = LuaValue.valueOf(args[i]);
+        }
+        
+        execute.invoke(CoerceJavaToLua.coerce(number), LuaTable.listOf(luaArgs));
+//        execute.invoke(CoerceJavaToLua.coerce(number), CoerceJavaToLua.coerce(new ArgsTable(args)));
     }
 
     @Override
@@ -91,4 +95,36 @@ public class LuaCommand extends CCommand {
         return names.toArray(new String[names.size()]);
     }
     
+    // Keep just in case of fucking bugs
+    @RequiredArgsConstructor
+    class ArgsTable {
+        final String[] args;
+        
+        public boolean has(int i) {
+            return length() <= i;
+        }
+        
+        public String get(int i) {
+            return args[i];
+        }
+        
+        public String[] get() {
+            return args;
+        }
+        
+        public int length() {
+            return args.length;
+        }
+        
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            
+            for (String arg : args) {
+                sb.append(arg + " ");
+            }
+            
+            return sb.toString().trim();
+        }
+    }
 }

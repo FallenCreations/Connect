@@ -56,6 +56,8 @@ public class TwilioCallback extends NanoHTTPD {
         SMSIncomingEvent event = new SMSIncomingEvent(service, raw);
         Bukkit.getPluginManager().callEvent(event);
         
-        return newFixedLengthResponse(Status.OK, "application/xml", "<Response><Message>Recieved Message</Message></Response>");
+        // TODO: add option to return string from a lua command instead of replying to messages in a lua command
+        //       This way it sends messages faster. (less queries)
+        return newFixedLengthResponse(Status.OK, "application/xml", "<Response></Response>");
     }
 }

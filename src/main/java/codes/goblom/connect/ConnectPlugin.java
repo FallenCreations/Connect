@@ -147,11 +147,12 @@ public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
         if (event.isCancelled()) return;
         
         if (event.getMessageBody().startsWith("/")) {
-            String command = event.getMessageBody();
+            String command = event.getMessageBody().split(" ")[0].replace("/", "");
             
-            CCommand cmd = CommandHandlers.getCommand(command.replace("/", ""));
+            CCommand cmd = CommandHandlers.getCommand(command);
             
-            cmd.execute(event.getNumberInvolved(), event.getMessageBody().substring(command.length()).split(" "));
+            if (cmd == null) return;
+            cmd.execute(event.getNumberInvolved(), event.getMessageBody().substring(command.length() + 1).trim().split(" "));
         }
     }
     
