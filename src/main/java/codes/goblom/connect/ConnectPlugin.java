@@ -18,6 +18,7 @@ import codes.goblom.connect.services.twilio.TwilioService;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -25,7 +26,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  *
  * @author Goblom
  */
-public class ConnectPlugin extends JavaPlugin implements SMSService {
+public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
     
     @Getter
     private SMSService service;
@@ -174,6 +175,7 @@ public class ConnectPlugin extends JavaPlugin implements SMSService {
             CommandHandlers.registerCommandHandler(LuaCommandHandler.class, new LuaCommandHandler(ConnectPlugin.this));
             ConnectPlugin.this.messageQueue = new TextMessageQueue(ConnectPlugin.this.service);
             Bukkit.getScheduler().runTaskTimerAsynchronously(ConnectPlugin.this, messageQueue, 20 * getConfig().getInt("message_queue.interval", 60), 0);
+            Bukkit.getPluginManager().registerEvents(ConnectPlugin.this, ConnectPlugin.this);
         }
         
     }
