@@ -5,7 +5,8 @@
         Server recieves message then replies with given command
         function in "onCommand" or "onExecute"
 ]]
-
+Bukkit = luajava.bindClass("org.bukkit.Bukkit")
+Server = Bukkit:getServer()
 
 setCommand("online")
 addAlias("o")
@@ -16,7 +17,23 @@ addAlias("o")
     execute(function(number, args))
 ]]
 onCommand(
-    function (phoneNumber, ...)
-        phoneNumber:reply("There are " .. Bukkit.getOnlinePlayers():size() .. " online.")
+    function (phoneNumber, args)
+--[[
+	size = Bukkit:getServer():getOnlinePlayers():size()
+
+	if (size > 0)
+            players = Bukkit:getServer():getOnlinePlayers()
+            message = "Online (" .. size .. "): "
+
+            for i = 0, size - 1 do
+                message = message .. tostring(players:get(i).getName()) .. ", "
+            end
+
+            print(message)
+            phoneNumber:reply(message)
+	else
+]]
+            phoneNumber:reply("There are " .. tostring(Bukkit:getServer():getOnlinePlayers():size()) .. " player(s) online.")
+--	end
     end
 )
