@@ -16,7 +16,7 @@ import org.bukkit.event.HandlerList;
  *
  * @author Goblom
  */
-public class SMSOutgoingEvent extends SMSEvent {
+public class MessageOutgoingEvent extends MessageEvent {
     private static final HandlerList handlers = new HandlerList();
 
     @Override
@@ -34,7 +34,7 @@ public class SMSOutgoingEvent extends SMSEvent {
     @Getter
     private Object rawData = null;
     
-    public SMSOutgoingEvent(SMSService service, Contact contact, String messageBody) {
+    public MessageOutgoingEvent(SMSService service, Contact contact, String messageBody) {
         super(service, contact, messageBody);
         
         URL url = null;
@@ -45,7 +45,7 @@ public class SMSOutgoingEvent extends SMSEvent {
         this.mediaMessage = url != null;
     }
     
-    public SMSOutgoingEvent(SMSService service, Contact contact, String messageBody, Object otherData) {
+    public MessageOutgoingEvent(SMSService service, Contact contact, String messageBody, Object otherData) {
         this(service, contact, messageBody);
         
         this.rawData = otherData;

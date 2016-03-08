@@ -6,7 +6,7 @@
 package codes.goblom.connect.services.twilio;
 
 import codes.goblom.connect.ConnectPlugin;
-import codes.goblom.connect.api.events.SMSIncomingEvent;
+import codes.goblom.connect.api.events.MessageIncomingEvent;
 import codes.goblom.connect.libs.NanoHTTPD;
 import codes.goblom.connect.libs.NanoHTTPD.Response.Status;
 import java.util.HashMap;
@@ -53,7 +53,7 @@ public class TwilioCallback extends NanoHTTPD {
             return newFixedLengthResponse(Status.OK, "application/xml", "<Response><Message>Error: Unable to parse message</Message></Response>");
         }
         
-        SMSIncomingEvent event = new TwilioIncomingEvent(service, raw);
+        MessageIncomingEvent event = new TwilioIncomingEvent(service, raw);
         Bukkit.getPluginManager().callEvent(event);
         
         // TODO: add option to return string from a lua command instead of replying to messages in a lua command

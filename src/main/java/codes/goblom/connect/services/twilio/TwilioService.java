@@ -9,7 +9,7 @@ import codes.goblom.connect.ConnectPlugin;
 import codes.goblom.connect.api.Contact;
 import codes.goblom.connect.api.SMSService;
 import codes.goblom.connect.api.ServiceName;
-import codes.goblom.connect.api.events.SMSOutgoingEvent;
+import codes.goblom.connect.api.events.MessageOutgoingEvent;
 import com.google.common.collect.Lists;
 import com.twilio.sdk.TwilioRestClient;
 import com.twilio.sdk.resource.instance.Message;
@@ -86,7 +86,7 @@ public class TwilioService implements SMSService {
         }
         
         Message message = twilio.getAccount().getMessageFactory().create(list);
-        Bukkit.getPluginManager().callEvent(new SMSOutgoingEvent(this, contact, messageBody, message));
+        Bukkit.getPluginManager().callEvent(new MessageOutgoingEvent(this, contact, messageBody, message));
     }
     
     @Override

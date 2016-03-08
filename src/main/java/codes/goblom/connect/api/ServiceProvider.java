@@ -17,6 +17,21 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServiceProvider {
     private static final Map<String, Class<? extends SMSService>> SERVICES = new ServiceHashMap();
     protected static final Map<Class<? extends SMSService>, SMSService> INSTANCE = new ConcurrentHashMap();
+    private static boolean LOADED = false;
+    
+    public static void finishLoading() {
+        if (LOADED) return;
+        
+        SERVICES.values().forEach((serviceClass) -> {
+            try {
+                serviceClass.newInstance().done();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        
+        LOADED = true;
+    }
     
     public static Collection<SMSService> getServices() {
         return Collections.unmodifiableCollection(INSTANCE.values());

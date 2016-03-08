@@ -6,7 +6,6 @@
 package codes.goblom.connect.api.events;
 
 import codes.goblom.connect.api.Contact;
-import codes.goblom.connect.services.twilio.PhoneNumber;
 import codes.goblom.connect.api.SMSService;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +14,7 @@ import lombok.Setter;
  *
  * @author Goblom
  */
-public abstract class SMSEvent extends ConnectEvent {
+public abstract class MessageEvent extends ConnectEvent {
     
     @Getter
     @Setter
@@ -28,7 +27,7 @@ public abstract class SMSEvent extends ConnectEvent {
     @Getter
     private final Contact contactInvolved;
     
-    public SMSEvent(SMSService service, Contact contact, String messageBody) {
+    public MessageEvent(SMSService service, Contact contact, String messageBody) {
         super(service);
         
         this.messageBody = messageBody;

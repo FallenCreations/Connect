@@ -16,13 +16,13 @@ import org.bukkit.event.HandlerList;
  *
  * @author Goblom
  */
-public abstract class SMSIncomingEvent extends SMSEvent implements Cancellable {
+public abstract class MessageIncomingEvent extends MessageEvent implements Cancellable {
     
     @Getter
     @Setter
     private boolean cancelled;
 
-    public SMSIncomingEvent(SMSService service, Contact contact, String messageBody) {
+    public MessageIncomingEvent(SMSService service, Contact contact, String messageBody) {
         super(service, contact, messageBody);
     }
     

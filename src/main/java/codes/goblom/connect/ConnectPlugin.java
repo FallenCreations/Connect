@@ -7,19 +7,22 @@ package codes.goblom.connect;
 
 import codes.goblom.connect.api.ServiceProvider;
 import codes.goblom.connect.api.SMSService;
-import codes.goblom.connect.api.events.SMSIncomingEvent;
+import codes.goblom.connect.api.events.MessageIncomingEvent;
 import codes.goblom.connect.api.CommandHandlers;
 import codes.goblom.connect.api.Contact;
 import codes.goblom.connect.api.command.CCommand;
 import codes.goblom.connect.api.command.lua.LuaCommandHandler;
+import codes.goblom.connect.api.events.MessageOutgoingEvent;
 import codes.goblom.connect.libs.ServiceConnectTask;
 import codes.goblom.connect.services.twilio.TwilioService;
+import java.util.logging.Level;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -50,21 +53,11 @@ public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
     }
     
     @Override
+    // Connect to Default Service
     public void connect(ConnectPlugin plugin) throws Exception {
         if (this.service != null) {
             throw new Error("Already connected to message service");
         }
-        
-//        String smsService = getConfig().getString("service");
-//        
-//        if (ServiceProvider.isRegistered(smsService)) {
-//            Class<? extends SMSService> clazz = ServiceProvider.getSMSService(smsService);
-//            this.service = clazz.newInstance();
-//            this.service.connect(plugin);
-//        }
-        
-//        this.service = new TwilioService();
-//        this.service.connect(plugin);
         
         ConnectTask task = new ConnectTask();
         new BukkitRunnable() {
@@ -125,11 +118,27 @@ public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
     @Override
     public void close() {
         service.close();
+        
+        getLogger().warning("Default service has been disabled. There may be problems unless server is restarted.");
     }
     
     @EventHandler
-    protected void onMessageIncoming(SMSIncomingEvent event) {
-        getLogger().severe("Incoming Message: " + event.getMessageBody());
+    protected void onMessageOutgoing(MessageOutgoingEvent event) {
+        JSONObject debug = new JSONObject();
+                   debug.put("Type", "OUTGOING");
+                   debug.put("Message", event.getMessageBody());
+                   debug.put("To", event.getContactInvolved().parse());
+        getLogger().log(Level.INFO, "Debug: {0}", debug);
+    }
+    
+    @EventHandler
+    protected void onMessageIncoming(MessageIncomingEvent event) {
+        JSONObject debug = new JSONObject();
+                   debug.put("Type", "INCOMING");
+                   debug.put("Message", event.getMessageBody());
+                   debug.put("From", event.getContactInvolved().parse());
+        getLogger().log(Level.INFO, "Debug: {0}", debug);
+        
         if (event.isCancelled()) return;
         
         if (event.getMessageBody().startsWith("/")) {
@@ -162,6 +171,8 @@ public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
             ConnectPlugin.this.service.done();
             CommandHandlers.registerCommandHandler(LuaCommandHandler.class, new LuaCommandHandler(ConnectPlugin.this));
             Bukkit.getPluginManager().registerEvents(ConnectPlugin.this, ConnectPlugin.this);
+            
+            ServiceProvider.finishLoading();
         }
         
     }

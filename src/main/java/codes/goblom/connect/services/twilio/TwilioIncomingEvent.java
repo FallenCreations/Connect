@@ -5,7 +5,7 @@
  */
 package codes.goblom.connect.services.twilio;
 
-import codes.goblom.connect.api.events.SMSIncomingEvent;
+import codes.goblom.connect.api.events.MessageIncomingEvent;
 import java.util.Map;
 import lombok.Getter;
 import org.bukkit.event.HandlerList;
@@ -14,7 +14,7 @@ import org.bukkit.event.HandlerList;
  *
  * @author Goblom
  */
-public class TwilioIncomingEvent extends SMSIncomingEvent {
+public class TwilioIncomingEvent extends MessageIncomingEvent {
     
     @Getter
     private static final HandlerList handlerList = new HandlerList();
