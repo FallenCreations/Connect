@@ -16,7 +16,6 @@ import com.twilio.sdk.resource.instance.Message;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
-import lombok.Getter;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.bukkit.Bukkit;
@@ -26,7 +25,7 @@ import org.bukkit.Bukkit;
  * @author Goblom
  */
 @ServiceName( "Twilio" )
-public class TwilioService implements SMSService {
+public class TwilioService implements SMSService, Contact.StringToContact {
 
     private static boolean STARTED = false;
     
@@ -49,6 +48,7 @@ public class TwilioService implements SMSService {
         
         this.myNumber = config.number;
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, queue, 0, 20 * config.getMessageQueueOption("interval", 60));
+        Contact.registerConverter(this);
         STARTED = true;
     }
     
@@ -101,5 +101,15 @@ public class TwilioService implements SMSService {
         this.callback.stop();
         this.callback = null;
         this.queue = null;
+    }
+
+    @Override
+    public boolean isType(String str) {
+        return str.startsWith("+");
+    }
+
+    @Override
+    public Contact convert(String str) {
+        return PhoneNumber.fromString(str);
     }
 }

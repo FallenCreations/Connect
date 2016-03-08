@@ -5,6 +5,10 @@
  */
 package codes.goblom.connect.api;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import lombok.Getter;
 
 /**
@@ -12,6 +16,35 @@ import lombok.Getter;
  * @author Goblom
  */
 public abstract class Contact<T extends SMSService> {
+    
+    public static interface StringToContact {
+        
+        public boolean isType(String str);
+        
+        public Contact convert(String str);
+    }
+    
+    private static List<StringToContact> CONVERTERS = new ArrayList();
+    
+    public static boolean registerConverter(StringToContact converter) {
+        return CONVERTERS.add(converter);
+    }
+    
+    public static Contact convertString(final String str) {
+        Contact contact = null;
+        
+        for (StringToContact stc : CONVERTERS) {
+            if (contact != null) break;
+            
+            if (stc.isType(str)) {
+                try {
+                    contact = stc.convert(str);
+                } catch (Exception e) { e.printStackTrace(); }
+            }
+        }
+        
+        return contact;
+    }
     
     @Getter
     private final T service;
