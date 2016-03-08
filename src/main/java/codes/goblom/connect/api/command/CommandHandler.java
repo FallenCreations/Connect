@@ -5,7 +5,8 @@
  */
 package codes.goblom.connect.api.command;
 
-import codes.goblom.connect.api.PhoneNumber;
+import codes.goblom.connect.api.Contact;
+import codes.goblom.connect.services.twilio.PhoneNumber;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.io.File;
@@ -66,5 +67,5 @@ public abstract class CommandHandler<T extends CCommand> {
     
     public abstract void loadCommands();
     
-    public abstract void executeCommand(T command, PhoneNumber number, String[] args);
+    public abstract void executeCommand(T command, Contact contact, String[] args);
 }

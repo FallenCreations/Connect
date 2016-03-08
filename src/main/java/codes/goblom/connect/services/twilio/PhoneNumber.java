@@ -3,18 +3,19 @@
  * 
  * All Rights Reserved unless otherwise explicitly stated.
  */
-package codes.goblom.connect.api;
+package codes.goblom.connect.services.twilio;
 
-import codes.goblom.connect.ConnectPlugin;
+import codes.goblom.connect.api.Contact;
+import codes.goblom.connect.api.RequiredService;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  *
  * @author Goblom
  */
-public class PhoneNumber {
+@RequiredService( TwilioService.class )
+public class PhoneNumber extends Contact {
     
     @Getter @Setter
     private int countryCode, areaCode, number;
@@ -22,6 +23,8 @@ public class PhoneNumber {
     private final String strNum;
     
     public PhoneNumber(String stringNumber) {
+        super();
+        
         this.strNum = stringNumber.startsWith("+") ? stringNumber : "+" + stringNumber;
         
         this.countryCode = -1;
@@ -37,31 +40,13 @@ public class PhoneNumber {
     }
     
     public PhoneNumber(int countryCode, int areaCode, int number) {
+        super();
+        
         this.countryCode = countryCode;
         this.areaCode = areaCode;
         this.number = number;
         
         this.strNum = null;
-    }
-    
-    public void reply(String message) {
-        try {
-            sendMessage(message);
-        } catch (Exception e) { e.printStackTrace(); }
-    }
-    
-    public void reply(String... messages) {
-        try {
-            sendMessages(messages);
-        } catch (Exception e) { e.printStackTrace(); }
-    }
-    
-    public void sendMessage(String messageBody) throws Exception {
-        ((ConnectPlugin) JavaPlugin.getPlugin(ConnectPlugin.class)).sendTextMessage(this, messageBody);
-    }
-    
-    public void sendMessages(String... messages) throws Exception {
-        ((ConnectPlugin) JavaPlugin.getPlugin(ConnectPlugin.class)).sendTextMessages(this, messages);
     }
     
     public boolean isStringNumber() {
@@ -73,9 +58,13 @@ public class PhoneNumber {
             return strNum;
         }
         
-        return new StringBuilder("+").append(countryCode).append(areaCode).append(number).toString();
+        return new StringBuilder("+").append(countryCode <= 0 ? "" : countryCode).append(areaCode).append(number).toString();
     }
     
+    @Override
+    public String parse() {
+        return toNumberString();
+    }
     /**
      * Need to filter out all non-number characters otherwise it will error, will get to it later
      * @todo

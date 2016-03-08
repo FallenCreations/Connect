@@ -6,7 +6,7 @@
 package codes.goblom.connect.api.command;
 
 import codes.goblom.connect.api.CommandHandlers;
-import codes.goblom.connect.api.PhoneNumber;
+import codes.goblom.connect.api.Contact;
 import lombok.Getter;
 
 /**
@@ -30,5 +30,5 @@ public abstract class CCommand {
     
     public abstract String[] getNames();
     
-    public abstract void execute(PhoneNumber number, String[] args);
+    public abstract void execute(Contact contact, String[] args);
 }

@@ -5,9 +5,8 @@
  */
 package codes.goblom.connect.api.events;
 
-import codes.goblom.connect.api.PhoneNumber;
+import codes.goblom.connect.api.Contact;
 import codes.goblom.connect.api.SMSService;
-import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.Cancellable;
@@ -17,27 +16,16 @@ import org.bukkit.event.HandlerList;
  *
  * @author Goblom
  */
-public class SMSIncomingEvent extends SMSEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-
+public abstract class SMSIncomingEvent extends SMSEvent implements Cancellable {
+    
     @Getter
-    private final Map<String, String> rawData;
-    
-    @Getter @Setter
+    @Setter
     private boolean cancelled;
-    
-    public SMSIncomingEvent(SMSService service, Map<String, String> rawData) {
-        super(service, PhoneNumber.fromString(rawData.get("From")), rawData.get("Body"));
-        
-        this.rawData = rawData;
-    }
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
+    public SMSIncomingEvent(SMSService service, Contact contact, String messageBody) {
+        super(service, contact, messageBody);
     }
     
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+    @Override
+    public abstract HandlerList getHandlers();
 }

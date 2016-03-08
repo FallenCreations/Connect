@@ -5,7 +5,8 @@
  */
 package codes.goblom.connect.api.events;
 
-import codes.goblom.connect.api.PhoneNumber;
+import codes.goblom.connect.api.Contact;
+import codes.goblom.connect.services.twilio.PhoneNumber;
 import codes.goblom.connect.api.SMSService;
 import java.net.URL;
 import lombok.Getter;
@@ -33,8 +34,8 @@ public class SMSOutgoingEvent extends SMSEvent {
     @Getter
     private Object rawData = null;
     
-    public SMSOutgoingEvent(SMSService service, PhoneNumber number, String messageBody) {
-        super(service, number, messageBody);
+    public SMSOutgoingEvent(SMSService service, Contact contact, String messageBody) {
+        super(service, contact, messageBody);
         
         URL url = null;
         try {
@@ -44,8 +45,8 @@ public class SMSOutgoingEvent extends SMSEvent {
         this.mediaMessage = url != null;
     }
     
-    public SMSOutgoingEvent(SMSService service, PhoneNumber number, String messageBody, Object otherData) {
-        this(service, number, messageBody);
+    public SMSOutgoingEvent(SMSService service, Contact contact, String messageBody, Object otherData) {
+        this(service, contact, messageBody);
         
         this.rawData = otherData;
     }

@@ -3,7 +3,7 @@
  * 
  * All Rights Reserved unless otherwise explicitly stated.
  */
-package codes.goblom.connect.api;
+package codes.goblom.connect.services.twilio;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,14 +15,14 @@ import lombok.Setter;
 public class TextMessage {
     
     @Getter
-    protected final PhoneNumber toNumber;
+    protected final PhoneNumber to;
     
     @Getter
     @Setter
     protected String messageBody;
     
     public TextMessage(PhoneNumber to, String message) {
-        this.toNumber = to;
+        this.to = to;
         setMessageBody(message);
     }
 }

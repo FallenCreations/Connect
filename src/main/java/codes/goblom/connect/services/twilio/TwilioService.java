@@ -6,8 +6,8 @@
 package codes.goblom.connect.services.twilio;
 
 import codes.goblom.connect.ConnectPlugin;
+import codes.goblom.connect.api.Contact;
 import codes.goblom.connect.api.SMSService;
-import codes.goblom.connect.api.PhoneNumber;
 import codes.goblom.connect.api.ServiceName;
 import codes.goblom.connect.api.events.SMSOutgoingEvent;
 import com.google.common.collect.Lists;
@@ -30,12 +30,10 @@ public class TwilioService implements SMSService {
 
     private static boolean STARTED = false;
     
-    @Getter
-    private String name = "Twilio";
-    
     private TwilioRestClient twilio;
     private TwilioCallback callback;
     private TwilioConfig config;
+    private TwilioMessageQueue queue;
     private PhoneNumber myNumber;
     
     @Override
@@ -43,19 +41,41 @@ public class TwilioService implements SMSService {
         if (STARTED) return; // TODO: Otherwise it loops. Need to find loop point
         this.config = new TwilioConfig(plugin);
         this.callback = new TwilioCallback(plugin, this, config.port);
+        this.queue = new TwilioMessageQueue(this);
         
         if (callback.start0()) {
             this.twilio = config.connect();
         } else throw new Error("Unable to load TwilioService. Please check all configurations.");
         
         this.myNumber = config.number;
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, queue, 0, 20 * config.getMessageQueueOption("interval", 60));
         STARTED = true;
     }
     
     @Override
-    public void sendTextMessage(PhoneNumber to, String messageBody) throws Exception {
+    public void sendMessage(Contact to, String messageBody) throws Exception {
+        sendMessage(false, (PhoneNumber) to, messageBody);
+    }    
+
+    @Override
+    public void sendMessages(Contact to, String[] messageBodies) throws Exception {
+        Arrays.asList(messageBodies).forEach((message) -> {
+            try {
+                sendMessage(to, message);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+    }
+    
+    protected void sendMessage(boolean bypass, PhoneNumber contact, String messageBody) throws Exception {
+        if (!bypass && config.getMessageQueueOption("enabled", true)) {
+           queue.add(new TextMessage(contact, messageBody));
+           return;
+        }
+        
         List<NameValuePair> list = Lists.newArrayList();
-        list.add(new BasicNameValuePair("To", to.toNumberString()));
+        list.add(new BasicNameValuePair("To", contact.parse()));
         list.add(new BasicNameValuePair("From", myNumber.toNumberString()));
         
         try {
@@ -66,26 +86,20 @@ public class TwilioService implements SMSService {
         }
         
         Message message = twilio.getAccount().getMessageFactory().create(list);
-        Bukkit.getPluginManager().callEvent(new SMSOutgoingEvent(this, to, messageBody, message));
-    }    
-
-    @Override
-    public void sendTextMessages(PhoneNumber to, String[] messageBodies) throws Exception {
-        Arrays.asList(messageBodies).forEach((message) -> {
-            try {
-                sendTextMessage(to, message);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
+        Bukkit.getPluginManager().callEvent(new SMSOutgoingEvent(this, contact, messageBody, message));
     }
     
     @Override
     public void close() {
+        if (config.getMessageQueueOption("send_remaining_on_disable", false)) {
+            queue.sendRemaining();
+        }
+        
         this.config = null;
         this.myNumber = null;
         this.twilio = null;
         this.callback.stop();
         this.callback = null;
+        this.queue = null;
     }
 }

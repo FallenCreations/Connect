@@ -5,7 +5,8 @@
  */
 package codes.goblom.connect.api.events;
 
-import codes.goblom.connect.api.PhoneNumber;
+import codes.goblom.connect.api.Contact;
+import codes.goblom.connect.services.twilio.PhoneNumber;
 import codes.goblom.connect.api.SMSService;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,16 +22,16 @@ public abstract class SMSEvent extends ConnectEvent {
     private String messageBody;
     
     /**
-     * This is not the number you have specified in the config.
-     * This is the number that it is sending to or receiving from;
+     * This is not the contact you have specified in the config.
+     * This is the contact that it is sending to or receiving from;
      */
     @Getter
-    private final PhoneNumber numberInvolved;
+    private final Contact contactInvolved;
     
-    public SMSEvent(SMSService service, PhoneNumber number, String messageBody) {
+    public SMSEvent(SMSService service, Contact contact, String messageBody) {
         super(service);
         
         this.messageBody = messageBody;
-        this.numberInvolved = number;
+        this.contactInvolved = contact;
     }
 }

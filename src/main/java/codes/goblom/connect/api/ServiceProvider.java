@@ -5,18 +5,30 @@
  */
 package codes.goblom.connect.api;
 
-import codes.goblom.connect.api.SMSService;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
  * @author Goblom
  */
 public class ServiceProvider {
-    public static final Map<String, Class<? extends SMSService>> SERVICES = new ServiceHashMap();
+    private static final Map<String, Class<? extends SMSService>> SERVICES = new ServiceHashMap();
+    protected static final Map<Class<? extends SMSService>, SMSService> INSTANCE = new ConcurrentHashMap();
     
-    public static Class<? extends SMSService> getSMSService(String name) {
+    public static Collection<SMSService> getServices() {
+        return Collections.unmodifiableCollection(INSTANCE.values());
+    }
+    
+    public static <T extends SMSService> T getSMSServiceInstance(Class<T> clazz) {
+        SMSService service = INSTANCE.get(clazz);
+        
+        return service != null ? (T) service : null;
+    }
+    
+    public static Class<? extends SMSService> getSMSServiceClass(String name) {
         return SERVICES.getOrDefault(name, null);
     }
     
@@ -54,7 +66,7 @@ public class ServiceProvider {
         return null;
     }
     
-    private static class ServiceHashMap extends HashMap<String, Class<? extends SMSService>> {
+    private static class ServiceHashMap extends ConcurrentHashMap<String, Class<? extends SMSService>> {
 
         @Override
         public Class<? extends SMSService> replace(String key, Class<? extends SMSService> value) {

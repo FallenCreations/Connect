@@ -7,10 +7,9 @@ package codes.goblom.connect;
 
 import codes.goblom.connect.api.ServiceProvider;
 import codes.goblom.connect.api.SMSService;
-import codes.goblom.connect.api.PhoneNumber;
-import codes.goblom.connect.api.TextMessage;
 import codes.goblom.connect.api.events.SMSIncomingEvent;
 import codes.goblom.connect.api.CommandHandlers;
+import codes.goblom.connect.api.Contact;
 import codes.goblom.connect.api.command.CCommand;
 import codes.goblom.connect.api.command.lua.LuaCommandHandler;
 import codes.goblom.connect.libs.ServiceConnectTask;
@@ -30,7 +29,6 @@ public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
     
     @Getter
     private SMSService service;
-    private TextMessageQueue messageQueue;
     
     @Override
     public void onEnable() {
@@ -48,9 +46,7 @@ public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
 
     @Override
     public void onDisable() {
-        if (getConfig().getBoolean("message_queue.send_remaining_on_disable")) {
-            messageQueue.sendRemaining();
-        }
+        ServiceProvider.getServices().forEach((service) -> service.close());
     }
     
     @Override
@@ -115,24 +111,14 @@ public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
     }
 
     @Override
-    public void sendTextMessage(PhoneNumber to, String messageBody) throws Exception {
-        if (getConfig().getBoolean("message_queue.enabled")) {
-            messageQueue.add(new TextMessage(to, messageBody));
-        } else service.sendTextMessage(to, messageBody);
+    public void sendMessage(Contact to, String messageBody) throws Exception {
+        service.sendMessage(to, messageBody);
     }
     
     @Override
-    public void sendTextMessages(PhoneNumber to, String[] messages) throws Exception {
-//        if (getConfig().getBoolean("message_queue.enabled")) {
-//            for (String message : messages) {
-//                messageQueue.add(new TextMessage(to, message));
-//            }
-//        } else {
-//            service.sendTextMessages(to, messages);
-//        }
-        
+    public void sendMessages(Contact to, String[] messages) throws Exception {        
         for (String message : messages) {
-            sendTextMessage(to, message);
+            sendMessage(to, message);
         }
     }
     
@@ -142,7 +128,7 @@ public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
     }
     
     @EventHandler
-    protected void onTextMessageIncoming(SMSIncomingEvent event) {
+    protected void onMessageIncoming(SMSIncomingEvent event) {
         getLogger().severe("Incoming Message: " + event.getMessageBody());
         if (event.isCancelled()) return;
         
@@ -152,7 +138,7 @@ public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
             CCommand cmd = CommandHandlers.getCommand(command);
             
             if (cmd == null) return;
-            cmd.execute(event.getNumberInvolved(), event.getMessageBody().substring(command.length() + 1).trim().split(" "));
+            cmd.execute(event.getContactInvolved(), event.getMessageBody().substring(command.length() + 1).trim().split(" "));
         }
     }
     
@@ -160,10 +146,10 @@ public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
 
         @Override
         public SMSService run() throws Exception {
-            String smsService = getConfig().getString("service");
+            String smsService = getConfig().getString("default-service");
         
             if (ServiceProvider.isRegistered(smsService)) {
-                Class<? extends SMSService> clazz = ServiceProvider.getSMSService(smsService);
+                Class<? extends SMSService> clazz = ServiceProvider.getSMSServiceClass(smsService);
                 
                 return clazz.newInstance();
             }
@@ -173,9 +159,8 @@ public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
 
         @Override
         public void onComplete() {
+            ConnectPlugin.this.service.done();
             CommandHandlers.registerCommandHandler(LuaCommandHandler.class, new LuaCommandHandler(ConnectPlugin.this));
-            ConnectPlugin.this.messageQueue = new TextMessageQueue(ConnectPlugin.this.service);
-            Bukkit.getScheduler().runTaskTimerAsynchronously(ConnectPlugin.this, messageQueue, 20 * getConfig().getInt("message_queue.interval", 60), 0);
             Bukkit.getPluginManager().registerEvents(ConnectPlugin.this, ConnectPlugin.this);
         }
         

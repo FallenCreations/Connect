@@ -6,7 +6,7 @@
 package codes.goblom.connect.api.command.lua;
 
 import codes.goblom.connect.ConnectPlugin;
-import codes.goblom.connect.api.PhoneNumber;
+import codes.goblom.connect.api.Contact;
 import codes.goblom.connect.api.command.CommandHandler;
 import java.io.File;
 import java.util.Locale;
@@ -22,8 +22,8 @@ public class LuaCommandHandler extends CommandHandler<LuaCommand> {
     }
 
     @Override
-    public void executeCommand(LuaCommand command, PhoneNumber number, String[] args) {
-        command.execute(number, args);
+    public void executeCommand(LuaCommand command, Contact contact, String[] args) {
+        command.execute(contact, args);
     }
 
     @Override

@@ -6,13 +6,12 @@
 package codes.goblom.connect.api.command.lua;
 
 import codes.goblom.connect.ConnectPlugin;
-import codes.goblom.connect.api.PhoneNumber;
+import codes.goblom.connect.api.Contact;
 import codes.goblom.connect.api.command.CCommand;
 import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Locale;
-import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.luaj.vm2.Globals;
@@ -75,14 +74,14 @@ public class LuaCommand extends CCommand {
     }
 
     @Override
-    public void execute(PhoneNumber number, String[] args) {
+    public void execute(Contact contact, String[] args) {
         LuaValue[] luaArgs = new LuaValue[args.length];
         
         for (int i = 0; i< args.length; i++) {
             luaArgs[i] = LuaValue.valueOf(args[i]);
         }
         
-        execute.invoke(CoerceJavaToLua.coerce(number), LuaTable.listOf(luaArgs));
+        execute.invoke(CoerceJavaToLua.coerce(contact), LuaTable.listOf(luaArgs));
 //        execute.invoke(CoerceJavaToLua.coerce(number), CoerceJavaToLua.coerce(new ArgsTable(args)));
     }
 

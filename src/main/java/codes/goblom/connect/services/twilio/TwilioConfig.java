@@ -6,7 +6,6 @@
 package codes.goblom.connect.services.twilio;
 
 import codes.goblom.connect.ConnectPlugin;
-import codes.goblom.connect.api.PhoneNumber;
 import com.twilio.sdk.TwilioRestClient;
 import java.util.Map;
 import lombok.Getter;
@@ -21,6 +20,7 @@ public class TwilioConfig {
         
     private final String authToken, sid;
     private final ConfigurationSection twilioConfig;
+    private final ConnectPlugin plugin;
     protected final PhoneNumber number;
     protected final int port;
     
@@ -29,7 +29,8 @@ public class TwilioConfig {
     
     private boolean hasConnected = false;
     
-    TwilioConfig(ConnectPlugin plugin) {        
+    TwilioConfig(ConnectPlugin plugin) {      
+        this.plugin = plugin;
         this.twilioConfig = plugin.getConfig().getConfigurationSection("Twilio");
         this.authToken = twilioConfig.getString("auth_token");
         this.sid = twilioConfig.getString("sid");
@@ -83,5 +84,17 @@ public class TwilioConfig {
         }
         
         return null;
+    }
+    
+    public <T> T getMessageQueueOption(String key, T def) {
+        ConfigurationSection config = twilioConfig.getConfigurationSection("message_queue");
+        
+        if (!config.contains(key)) {
+            config.set(key, def);
+            plugin.saveConfig();
+            return def;
+        }
+        
+        return (T) config.get(key);
     }
 }

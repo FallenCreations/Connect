@@ -53,7 +53,7 @@ public class TwilioCallback extends NanoHTTPD {
             return newFixedLengthResponse(Status.OK, "application/xml", "<Response><Message>Error: Unable to parse message</Message></Response>");
         }
         
-        SMSIncomingEvent event = new SMSIncomingEvent(service, raw);
+        SMSIncomingEvent event = new TwilioIncomingEvent(service, raw);
         Bukkit.getPluginManager().callEvent(event);
         
         // TODO: add option to return string from a lua command instead of replying to messages in a lua command

@@ -3,24 +3,20 @@
  * 
  * All Rights Reserved unless otherwise explicitly stated.
  */
-package codes.goblom.connect;
+package codes.goblom.connect.services.twilio;
 
-import codes.goblom.connect.api.SMSService;
-import codes.goblom.connect.api.TextMessage;
 import java.util.LinkedList;
+import lombok.RequiredArgsConstructor;
 
 /**
  *
  * @author Goblom
  */
-public class TextMessageQueue implements Runnable {
+@RequiredArgsConstructor
+public class TwilioMessageQueue implements Runnable {
     
-    private final SMSService service;
     private final LinkedList<TextMessage> queue = new LinkedList();
-    
-    protected TextMessageQueue(SMSService service) {
-        this.service = service;
-    }
+    private final TwilioService service;
     
     public void add(TextMessage message) {
         queue.addLast(message);
@@ -33,7 +29,7 @@ public class TextMessageQueue implements Runnable {
         if (txt == null) return;
         
         try {
-            service.sendTextMessage(txt.getToNumber(), txt.getMessageBody());
+            service.sendMessage(true, txt.getTo(), txt.getMessageBody());
         } catch (Exception e) {
             e.printStackTrace();
         }
