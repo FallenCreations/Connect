@@ -6,6 +6,7 @@
 package codes.goblom.connect.api;
 
 import codes.goblom.connect.ConnectPlugin;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -44,13 +45,15 @@ public interface SMSService {
     public default <T> T getConfigOption(String key, T def) {
         JavaPlugin plugin = JavaPlugin.getPlugin(ConnectPlugin.class);
         FileConfiguration config = plugin.getConfig();
+        ConfigurationSection section = config.getConfigurationSection(ServiceProvider.getServiceName(getClass()));
+        if (section == null) section = config.createSection(ServiceProvider.getServiceName(getClass()));
         
-        if (!config.contains(key)) {
-            config.set(key, def);
+        if (!section.contains(key)) {
+            section.set(key, def);
             plugin.saveConfig();
             return def;
         }
         
-        return (T) config.get(key);
+        return (T) section.get(key);
     }
 }

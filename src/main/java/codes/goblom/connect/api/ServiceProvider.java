@@ -71,7 +71,7 @@ public class ServiceProvider {
         return name != null && name.value() != null && !name.value().isEmpty();
     }
     
-    private static String getServiceName(Class<? extends SMSService> clazz) {
+    protected static String getServiceName(Class<? extends SMSService> clazz) {
         if (isValidateService(clazz)) {
             ServiceName name = clazz.getAnnotation(ServiceName.class);
             
