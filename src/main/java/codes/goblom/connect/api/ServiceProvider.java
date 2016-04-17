@@ -71,7 +71,7 @@ public class ServiceProvider {
         return name != null && name.value() != null && !name.value().isEmpty();
     }
     
-    protected static String getServiceName(Class<? extends SMSService> clazz) {
+    public static String getServiceName(Class<? extends SMSService> clazz) {
         if (isValidateService(clazz)) {
             ServiceName name = clazz.getAnnotation(ServiceName.class);
             
@@ -124,7 +124,7 @@ public class ServiceProvider {
             return super.put(key, value);
         }
         
-        private String[] invalidServices = { "Connect", "ConnectPlugin" };
+        private String[] invalidServices = { "Connect", "ConnectPlugin", "" };
         private void validate(String key) {
             if (key.isEmpty()) throw new RuntimeException("Invalid Service Name");
             for (String invalid : invalidServices) {

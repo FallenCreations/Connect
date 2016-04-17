@@ -58,7 +58,7 @@ public class PhoneNumber extends Contact {
             return strNum;
         }
         
-        return new StringBuilder("+").append(countryCode <= 0 ? "" : countryCode).append(areaCode).append(number).toString();
+        return new StringBuilder("+").append(countryCode <= 0 ? 1 : countryCode).append(areaCode).append(number).toString();
     }
     
     @Override

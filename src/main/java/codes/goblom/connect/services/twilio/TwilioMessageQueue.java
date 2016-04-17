@@ -7,13 +7,14 @@ package codes.goblom.connect.services.twilio;
 
 import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  *
  * @author Goblom
  */
 @RequiredArgsConstructor
-public class TwilioMessageQueue implements Runnable {
+public class TwilioMessageQueue extends BukkitRunnable {
     
     private final LinkedList<TextMessage> queue = new LinkedList();
     private final TwilioService service;

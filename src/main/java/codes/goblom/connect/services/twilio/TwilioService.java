@@ -9,7 +9,8 @@ import codes.goblom.connect.ConnectPlugin;
 import codes.goblom.connect.api.Contact;
 import codes.goblom.connect.api.SMSService;
 import codes.goblom.connect.api.ServiceName;
-import codes.goblom.connect.api.events.MessageOutgoingEvent;
+import codes.goblom.connect.api.events.MessageFinishedOutgoingEvent;
+import codes.goblom.connect.api.events.MessageStartedOutgoingEvent;
 import com.google.common.collect.Lists;
 import com.twilio.sdk.TwilioRestClient;
 import com.twilio.sdk.resource.instance.Message;
@@ -47,7 +48,7 @@ public class TwilioService implements SMSService, Contact.StringToContact {
         } else throw new Error("Unable to load TwilioService. Please check all configurations.");
         
         this.myNumber = config.number;
-        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, queue, 0, 20 * config.getMessageQueueOption("interval", 60));
+        queue.runTaskTimerAsynchronously(plugin, 0, 20 * config.getMessageQueueOption("interval", 60));
         Contact.registerConverter(this);
         STARTED = true;
     }
@@ -69,24 +70,31 @@ public class TwilioService implements SMSService, Contact.StringToContact {
     }
     
     protected void sendMessage(boolean bypass, PhoneNumber contact, String messageBody) throws Exception {
-        if (!bypass && config.getMessageQueueOption("enabled", true)) {
-           queue.add(new TextMessage(contact, messageBody));
-           return;
+        if (!bypass) {
+            if (config.getMessageQueueOption("enabled", true)) {
+               queue.add(new TextMessage(contact, messageBody));
+               return;
+            }
         }
+        
+        MessageStartedOutgoingEvent msoe = new MessageStartedOutgoingEvent(this, contact, messageBody);
+        Bukkit.getPluginManager().callEvent(msoe);
+        
+        if (msoe.isCancelled()) return;
         
         List<NameValuePair> list = Lists.newArrayList();
         list.add(new BasicNameValuePair("To", contact.parse()));
         list.add(new BasicNameValuePair("From", myNumber.toNumberString()));
         
         try {
-            new URL(messageBody);
-            list.add(new BasicNameValuePair("MediaURL", messageBody));
+            new URL(msoe.getMessageBody());
+            list.add(new BasicNameValuePair("MediaURL", msoe.getMessageBody()));
         } catch (Exception e) { 
-            list.add(new BasicNameValuePair("Body", messageBody));
+            list.add(new BasicNameValuePair("Body", msoe.getMessageBody()));
         }
         
         Message message = twilio.getAccount().getMessageFactory().create(list);
-        Bukkit.getPluginManager().callEvent(new MessageOutgoingEvent(this, contact, messageBody, message));
+        Bukkit.getPluginManager().callEvent(new MessageFinishedOutgoingEvent(this, contact, messageBody, message));
     }
     
     @Override
@@ -95,6 +103,7 @@ public class TwilioService implements SMSService, Contact.StringToContact {
             queue.sendRemaining();
         }
         
+        this.queue.cancel();
         this.config = null;
         this.myNumber = null;
         this.twilio = null;

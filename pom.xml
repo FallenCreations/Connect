@@ -42,6 +42,13 @@
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.9.3</version>
         </dependency>
+        
+        <!-- https://github.com/FallenCreations/BorkLibs/tree/master/Executor -->
+        <dependency>
+            <groupId>net.fallencreations.borklibs</groupId>
+            <artifactId>Executor</artifactId>
+            <version>1</version>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -90,6 +97,7 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
+                                    <include>net.fallencreations.borklibs:Executor</include>
                                     <include>com.twilio.sdk:twilio-java-sdk</include>
                                     <include>org.apache.httpcomponents:httpcore</include>
                                     <include>org.apache.httpcomponents:httpclient</include>

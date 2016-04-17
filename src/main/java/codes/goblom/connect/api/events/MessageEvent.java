@@ -9,12 +9,17 @@ import codes.goblom.connect.api.Contact;
 import codes.goblom.connect.api.SMSService;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
 /**
  *
  * @author Goblom
  */
-public abstract class MessageEvent extends ConnectEvent {
+public abstract class MessageEvent extends Event {
+    
+    @Getter
+    private final SMSService service;
     
     @Getter
     @Setter
@@ -28,9 +33,12 @@ public abstract class MessageEvent extends ConnectEvent {
     private final Contact contactInvolved;
     
     public MessageEvent(SMSService service, Contact contact, String messageBody) {
-        super(service);
+        this.service = service;
         
         this.messageBody = messageBody;
         this.contactInvolved = contact;
     }
+    
+    @Override
+    public abstract HandlerList getHandlers();
 }

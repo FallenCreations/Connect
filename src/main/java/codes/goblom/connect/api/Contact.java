@@ -7,8 +7,6 @@ package codes.goblom.connect.api;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import lombok.Getter;
 
 /**
@@ -30,7 +28,7 @@ public abstract class Contact<T extends SMSService> {
         return CONVERTERS.add(converter);
     }
     
-    public static Contact convertString(final String str) {
+    public static Contact convertFromString(final String str) {
         Contact contact = null;
         
         for (StringToContact stc : CONVERTERS) {

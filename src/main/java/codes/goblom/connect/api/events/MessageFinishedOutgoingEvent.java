@@ -6,7 +6,6 @@
 package codes.goblom.connect.api.events;
 
 import codes.goblom.connect.api.Contact;
-import codes.goblom.connect.services.twilio.PhoneNumber;
 import codes.goblom.connect.api.SMSService;
 import java.net.URL;
 import lombok.Getter;
@@ -16,7 +15,7 @@ import org.bukkit.event.HandlerList;
  *
  * @author Goblom
  */
-public class MessageOutgoingEvent extends MessageEvent {
+public class MessageFinishedOutgoingEvent extends MessageEvent {
     private static final HandlerList handlers = new HandlerList();
 
     @Override
@@ -34,7 +33,7 @@ public class MessageOutgoingEvent extends MessageEvent {
     @Getter
     private Object rawData = null;
     
-    public MessageOutgoingEvent(SMSService service, Contact contact, String messageBody) {
+    public MessageFinishedOutgoingEvent(SMSService service, Contact contact, String messageBody) {
         super(service, contact, messageBody);
         
         URL url = null;
@@ -45,7 +44,7 @@ public class MessageOutgoingEvent extends MessageEvent {
         this.mediaMessage = url != null;
     }
     
-    public MessageOutgoingEvent(SMSService service, Contact contact, String messageBody, Object otherData) {
+    public MessageFinishedOutgoingEvent(SMSService service, Contact contact, String messageBody, Object otherData) {
         this(service, contact, messageBody);
         
         this.rawData = otherData;
