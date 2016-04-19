@@ -5,6 +5,7 @@
  */
 package codes.goblom.connect.api;
 
+import codes.goblom.connect.ConnectPlugin;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -19,12 +20,15 @@ public class ServiceProvider {
     protected static final Map<Class<? extends SMSService>, SMSService> INSTANCE = new ConcurrentHashMap();
     private static boolean LOADED = false;
     
-    public static void finishLoading() {
+    public static void finishLoading(ConnectPlugin plugin) {
         if (LOADED) return;
         
         SERVICES.values().forEach((serviceClass) -> {
             try {
-                serviceClass.newInstance().done();
+                SMSService service = serviceClass.newInstance();
+                
+                service.connect(plugin);
+                service.done();
             } catch (Exception e) {
                 e.printStackTrace();
             }
