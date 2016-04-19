@@ -7,6 +7,7 @@ package codes.goblom.connect.services.twilio;
 
 import codes.goblom.connect.ConnectPlugin;
 import codes.goblom.connect.api.Contact;
+import codes.goblom.connect.api.RequiredService;
 import codes.goblom.connect.api.SMSService;
 import codes.goblom.connect.api.ServiceName;
 import codes.goblom.connect.api.events.MessageFinishedOutgoingEvent;
@@ -52,14 +53,27 @@ public class TwilioService implements SMSService, Contact.StringToContact {
         Contact.registerConverter(this);
         STARTED = true;
     }
-    
+
+    private void validateContact(Contact to) {
+        RequiredService rs = to.getClass().getAnnotation(RequiredService.class);
+        if (rs == null || rs.value() == null) {
+            throw new RuntimeException("Contact is missing required @RequiredService tag, please message the developer.");
+        }
+
+        if (rs.value() != getClass()) {
+            throw new RuntimeException("This contact is not compatible with this service. Please try another server or use Contact#sendMessage(String)");
+        }
+    }
+
     @Override
     public void sendMessage(Contact to, String messageBody) throws Exception {
+        validateContact(to);
         sendMessage(false, (PhoneNumber) to, messageBody);
     }    
 
     @Override
     public void sendMessages(Contact to, String[] messageBodies) throws Exception {
+        validateContact(to);
         Arrays.asList(messageBodies).forEach((message) -> {
             try {
                 sendMessage(to, message);
