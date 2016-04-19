@@ -1,8 +1,8 @@
 default-service: Twilio
 
 Twilio:
-    sid: AC6222ea8b37f6386d5ab5298eb74512b3
-    auth_token: 7b355554c000cddd814165cf700d7c77
+    sid: -- SID --
+    auth_token: -- YOUR_AUTH_TOKEN --
     send_from: your_twilio_number
     incoming_callback_port: 10050
     
