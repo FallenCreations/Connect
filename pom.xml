@@ -104,6 +104,7 @@
                                     <include>commons-logging:commons-logging</include>
                                     <include>org.codehaus.jackson:jackson-core-asl</include>
                                     <include>org.codehaus.jackson:jackson-mapper-asl</include>
+                                    <include>org.luaj:luaj-jse</include>
                                 </includes>
                             </artifactSet>              
                         </configuration>

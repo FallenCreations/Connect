@@ -16,7 +16,7 @@ import org.bukkit.event.HandlerList;
  *
  * @author Goblom
  */
-public abstract class MessageEvent extends Event {
+abstract class MessageEvent extends Event {
     
     @Getter
     private final SMSService service;
