@@ -128,7 +128,7 @@ public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
                 cancel();
                 
                 if (service == null) {
-                    getLogger().severe("We were unable to load the SMSService. Plugin disabling.");
+                    getLogger().severe("We were unable to load the default SMSService. Plugin disabling.");
                     Bukkit.getPluginManager().disablePlugin(ConnectPlugin.this);
                 }
             }
@@ -210,7 +210,7 @@ public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
             CommandHandlers.registerCommandHandler(LuaCommandHandler.class, new LuaCommandHandler(ConnectPlugin.this));
             Bukkit.getPluginManager().registerEvents(ConnectPlugin.this, ConnectPlugin.this);
             
-            ServiceProvider.finishLoading();
+            ServiceProvider.finishLoading(ConnectPlugin.this);
         }
         
     }
