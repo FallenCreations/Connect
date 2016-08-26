@@ -5,7 +5,7 @@
  */
 package codes.goblom.connect.libs;
 
-import codes.goblom.connect.api.SMSService;
+import codes.goblom.connect.api.ConnectService;
 
 /**
  *
@@ -13,7 +13,7 @@ import codes.goblom.connect.api.SMSService;
  */
 public interface ServiceConnectTask {
     
-    public SMSService run() throws Exception;
+    public ConnectService run() throws Exception;
     
     public void onComplete();
 }

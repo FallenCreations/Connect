@@ -21,5 +21,5 @@ public @interface RequiredService {
     /**
      * Main SMSService for this Contact
      */
-    Class<? extends SMSService> value();
+    Class<? extends ConnectService> value();
 }

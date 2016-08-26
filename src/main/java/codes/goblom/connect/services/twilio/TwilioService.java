@@ -8,7 +8,7 @@ package codes.goblom.connect.services.twilio;
 import codes.goblom.connect.ConnectPlugin;
 import codes.goblom.connect.api.Contact;
 import codes.goblom.connect.api.RequiredService;
-import codes.goblom.connect.api.SMSService;
+import codes.goblom.connect.api.ConnectService;
 import codes.goblom.connect.api.ServiceName;
 import codes.goblom.connect.api.events.MessageFinishedOutgoingEvent;
 import codes.goblom.connect.api.events.MessageStartedOutgoingEvent;
@@ -27,7 +27,7 @@ import org.bukkit.Bukkit;
  * @author Goblom
  */
 @ServiceName( "Twilio" )
-public class TwilioService implements SMSService, Contact.StringToContact {
+public class TwilioService implements ConnectService, Contact.StringToContact {
 
     private static boolean STARTED = false;
     

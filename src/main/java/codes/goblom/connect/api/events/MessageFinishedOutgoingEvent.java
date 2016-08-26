@@ -6,7 +6,7 @@
 package codes.goblom.connect.api.events;
 
 import codes.goblom.connect.api.Contact;
-import codes.goblom.connect.api.SMSService;
+import codes.goblom.connect.api.ConnectService;
 import java.net.URL;
 import lombok.Getter;
 import org.bukkit.event.HandlerList;
@@ -33,7 +33,7 @@ public class MessageFinishedOutgoingEvent extends MessageEvent {
     @Getter
     private Object rawData = null;
     
-    public MessageFinishedOutgoingEvent(SMSService service, Contact contact, String messageBody) {
+    public MessageFinishedOutgoingEvent(ConnectService service, Contact contact, String messageBody) {
         super(service, contact, messageBody);
         
         URL url = null;
@@ -44,7 +44,7 @@ public class MessageFinishedOutgoingEvent extends MessageEvent {
         this.mediaMessage = url != null;
     }
     
-    public MessageFinishedOutgoingEvent(SMSService service, Contact contact, String messageBody, Object otherData) {
+    public MessageFinishedOutgoingEvent(ConnectService service, Contact contact, String messageBody, Object otherData) {
         this(service, contact, messageBody);
         
         this.rawData = otherData;

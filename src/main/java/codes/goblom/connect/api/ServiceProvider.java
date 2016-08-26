@@ -16,8 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Goblom
  */
 public class ServiceProvider {
-    private static final Map<String, Class<? extends SMSService>> SERVICES = new ServiceHashMap();
-    protected static final Map<Class<? extends SMSService>, SMSService> INSTANCE = new ConcurrentHashMap();
+    private static final Map<String, Class<? extends ConnectService>> SERVICES = new ServiceHashMap();
+    protected static final Map<Class<? extends ConnectService>, ConnectService> INSTANCE = new ConcurrentHashMap();
     private static boolean LOADED = false;
     
     public static void finishLoading(ConnectPlugin plugin) {
@@ -25,7 +25,7 @@ public class ServiceProvider {
         
         SERVICES.values().forEach((serviceClass) -> {
             try {
-                SMSService service = serviceClass.newInstance();
+                ConnectService service = serviceClass.newInstance();
                 
                 service.connect(plugin);
                 service.done();
@@ -37,17 +37,17 @@ public class ServiceProvider {
         LOADED = true;
     }
     
-    public static Collection<SMSService> getServices() {
+    public static Collection<ConnectService> getServices() {
         return Collections.unmodifiableCollection(INSTANCE.values());
     }
     
-    public static <T extends SMSService> T getSMSServiceInstance(Class<T> clazz) {
-        SMSService service = INSTANCE.get(clazz);
+    public static <T extends ConnectService> T getSMSServiceInstance(Class<T> clazz) {
+        ConnectService service = INSTANCE.get(clazz);
         
         return service != null ? (T) service : null;
     }
     
-    public static Class<? extends SMSService> getSMSServiceClass(String name) {
+    public static Class<? extends ConnectService> getSMSServiceClass(String name) {
         return SERVICES.getOrDefault(name, null);
     }
     
@@ -55,11 +55,11 @@ public class ServiceProvider {
         return SERVICES.containsKey(name);
     }
     
-    public static boolean isRegistered(Class<? extends SMSService> serviceClass) {
+    public static boolean isRegistered(Class<? extends ConnectService> serviceClass) {
         return isValidateService(serviceClass) && SERVICES.containsKey(getServiceName(serviceClass));
     }
     
-    public static void registerService(Class<? extends SMSService> serviceClass) {
+    public static void registerService(Class<? extends ConnectService> serviceClass) {
         String serviceName = getServiceName(serviceClass);
         
         if (!isRegistered(serviceClass)) {
@@ -69,13 +69,13 @@ public class ServiceProvider {
         }
     }
     
-    private static boolean isValidateService(Class<? extends SMSService> clazz) {
+    private static boolean isValidateService(Class<? extends ConnectService> clazz) {
         ServiceName name = clazz.getAnnotation(ServiceName.class);
         
         return name != null && name.value() != null && !name.value().isEmpty();
     }
     
-    public static String getServiceName(Class<? extends SMSService> clazz) {
+    public static String getServiceName(Class<? extends ConnectService> clazz) {
         if (isValidateService(clazz)) {
             ServiceName name = clazz.getAnnotation(ServiceName.class);
             
@@ -85,16 +85,16 @@ public class ServiceProvider {
         return null;
     }
     
-    private static class ServiceHashMap extends ConcurrentHashMap<String, Class<? extends SMSService>> {
+    private static class ServiceHashMap extends ConcurrentHashMap<String, Class<? extends ConnectService>> {
 
         @Override
-        public Class<? extends SMSService> replace(String key, Class<? extends SMSService> value) {
+        public Class<? extends ConnectService> replace(String key, Class<? extends ConnectService> value) {
             validate(key);
             return super.replace(key, value);
         }
 
         @Override
-        public boolean replace(String key, Class<? extends SMSService> oldValue, Class<? extends SMSService> newValue) {
+        public boolean replace(String key, Class<? extends ConnectService> oldValue, Class<? extends ConnectService> newValue) {
             validate(key);
             return super.replace(key, oldValue, newValue);
         }
@@ -106,13 +106,13 @@ public class ServiceProvider {
         }
 
         @Override
-        public Class<? extends SMSService> putIfAbsent(String key, Class<? extends SMSService> value) {
+        public Class<? extends ConnectService> putIfAbsent(String key, Class<? extends ConnectService> value) {
             validate(key);
             return super.putIfAbsent(key, value);
         }
 
         @Override
-        public Class<? extends SMSService> remove(Object key) {
+        public Class<? extends ConnectService> remove(Object key) {
             validate(key.toString());
             return super.remove(key);
         }
@@ -123,7 +123,7 @@ public class ServiceProvider {
 //        }
 
         @Override
-        public Class<? extends SMSService> put(String key, Class<? extends SMSService> value) {
+        public Class<? extends ConnectService> put(String key, Class<? extends ConnectService> value) {
             validate(key);
             return super.put(key, value);
         }

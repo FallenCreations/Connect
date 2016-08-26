@@ -6,7 +6,7 @@
 package codes.goblom.connect.api.events;
 
 import codes.goblom.connect.api.Contact;
-import codes.goblom.connect.api.SMSService;
+import codes.goblom.connect.api.ConnectService;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.Event;
@@ -19,7 +19,7 @@ import org.bukkit.event.HandlerList;
 abstract class MessageEvent extends Event {
     
     @Getter
-    private final SMSService service;
+    private final ConnectService service;
     
     @Getter
     @Setter
@@ -32,7 +32,7 @@ abstract class MessageEvent extends Event {
     @Getter
     private final Contact contactInvolved;
     
-    public MessageEvent(SMSService service, Contact contact, String messageBody) {
+    public MessageEvent(ConnectService service, Contact contact, String messageBody) {
         this.service = service;
         
         this.messageBody = messageBody;

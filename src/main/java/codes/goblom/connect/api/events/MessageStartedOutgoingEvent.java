@@ -6,7 +6,7 @@
 package codes.goblom.connect.api.events;
 
 import codes.goblom.connect.api.Contact;
-import codes.goblom.connect.api.SMSService;
+import codes.goblom.connect.api.ConnectService;
 import java.net.URL;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,7 +36,7 @@ public class MessageStartedOutgoingEvent extends MessageEvent implements Cancell
     @Setter
     private boolean cancelled;
     
-    public MessageStartedOutgoingEvent(SMSService service, Contact contact, String messageBody) {
+    public MessageStartedOutgoingEvent(ConnectService service, Contact contact, String messageBody) {
         super(service, contact, messageBody);
         
         URL url = null;

@@ -6,7 +6,7 @@
 package codes.goblom.connect.api.events;
 
 import codes.goblom.connect.api.Contact;
-import codes.goblom.connect.api.SMSService;
+import codes.goblom.connect.api.ConnectService;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.Cancellable;
@@ -22,7 +22,7 @@ public abstract class MessageIncomingEvent extends MessageEvent implements Cance
     @Setter
     private boolean cancelled;
 
-    public MessageIncomingEvent(SMSService service, Contact contact, String messageBody) {
+    public MessageIncomingEvent(ConnectService service, Contact contact, String messageBody) {
         super(service, contact, messageBody);
     }
     

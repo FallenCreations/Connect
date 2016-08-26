@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  *
  * @author Goblom
  */
-public interface SMSService {
+public interface ConnectService {
     
     /**
      * Do NOT override this method
@@ -33,7 +33,7 @@ public interface SMSService {
     
     public void close();
     
-    public default SMSService getService() {
+    public default ConnectService getService() {
         return this;
     }
     

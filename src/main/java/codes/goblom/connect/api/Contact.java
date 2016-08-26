@@ -13,7 +13,7 @@ import lombok.Getter;
  *
  * @author Goblom
  */
-public abstract class Contact<T extends SMSService> {
+public abstract class Contact<T extends ConnectService> {
     
     public static interface StringToContact {
         

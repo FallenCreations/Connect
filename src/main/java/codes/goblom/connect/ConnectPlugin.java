@@ -6,7 +6,7 @@
 package codes.goblom.connect;
 
 import codes.goblom.connect.api.ServiceProvider;
-import codes.goblom.connect.api.SMSService;
+import codes.goblom.connect.api.ConnectService;
 import codes.goblom.connect.api.events.MessageIncomingEvent;
 import codes.goblom.connect.api.CommandHandlers;
 import codes.goblom.connect.api.Contact;
@@ -32,10 +32,10 @@ import org.json.simple.JSONObject;
  *
  * @author Goblom
  */
-public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
+public class ConnectPlugin extends JavaPlugin implements ConnectService, Listener {
     
     @Getter
-    private SMSService service;
+    private ConnectService service;
     
     protected ConnectLog messageLogger = new ConnectLog();
     private Executor commandExecutor;
@@ -192,11 +192,11 @@ public class ConnectPlugin extends JavaPlugin implements SMSService, Listener {
     class ConnectTask implements ServiceConnectTask {
 
         @Override
-        public SMSService run() throws Exception {
+        public ConnectService run() throws Exception {
             String smsService = getConfig().getString("default-service");
         
             if (ServiceProvider.isRegistered(smsService)) {
-                Class<? extends SMSService> clazz = ServiceProvider.getSMSServiceClass(smsService);
+                Class<? extends ConnectService> clazz = ServiceProvider.getSMSServiceClass(smsService);
                 
                 return clazz.newInstance();
             }
